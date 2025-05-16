@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/internship/static/css/main.890148a6.css",
+    "main.js": "/internship/static/js/main.fc400d60.js",
+    "index.html": "/internship/index.html",
+    "static/media/getFetch.cjs": "/internship/static/media/getFetch.40f37ddea2378391108f.cjs",
+    "main.890148a6.css.map": "/internship/static/css/main.890148a6.css.map",
+    "main.fc400d60.js.map": "/internship/static/js/main.fc400d60.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.890148a6.css",
+    "static/js/main.fc400d60.js"
+  ]
+}
