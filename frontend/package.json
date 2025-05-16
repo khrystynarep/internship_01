@@ -3,7 +3,6 @@
     "version": "0.1.0",
     "private": true,
 
-    //added  homepage to deploy on pages
     "homepage": "https://khrystynarep.github.io/internship",
 
     "dependencies": {
