@@ -42,6 +42,9 @@ task copyToLib(type: Copy) {
 }
 test {
     useJUnit()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
     maxHeapSize = '1G'
     finalizedBy jacocoTestReport
 }
@@ -102,6 +105,8 @@ ext {
 //    compileOnly "org.projectlombok:lombok:$LOMBOK_VERSION"
 //    implementation "org.springframework.boot:spring-boot-star
 
+
+
 dependencies {
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.6.1'
     testImplementation('pl.pragmatists:JUnitParams:1.0.5')
@@ -151,7 +156,8 @@ dependencies {
 
 
     // Servlet
-    providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
+    compileOnly 'com.github.jsimone:webapp-runner:8.5.11.3'
 
 
     //Postgres DB
