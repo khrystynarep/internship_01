@@ -1,9 +1,7 @@
 pipeline {
     agent any
 
-    tools {
-        jdk 'jdk11'
-    }
+
 
     environment {
         GRADLE_USER_HOME = "${env.WORKSPACE}/.gradle"
