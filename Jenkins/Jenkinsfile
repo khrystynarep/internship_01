@@ -2,29 +2,63 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'NodeJS 18'     // Додай через Jenkins: Manage Jenkins → Global Tool Configuration
-        gradle 'Gradle 7.6'    // Додай так само
+        nodejs 'NodeJS_18'      // Назва NodeJS інструмента у Jenkins > Global Tools
+        jdk 'OpenJDK_11'        // Назва JDK 11 інструмента
+    }
+
+    environment {
+        CI = 'true'
+        SONARQUBE_ENV = 'SonarQubeServer' // Назва налаштованого SonarQube серверу в Jenkins
     }
 
     stages {
-        stage('📥 Checkout code') {
+        stage('Checkout') {
             steps {
-                git url: 'https://github.com/khrystynarep/internship_01.git', branch: '03'
+                git 'https://github.com/your-user/your-repo.git'
             }
         }
 
-        stage('📦 Check frontend dependencies') {
+        stage('Frontend: Install & Lint') {
             steps {
                 dir('frontend') {
-                    sh 'npm ci || npm install'
+                    sh 'npm ci'
+                    sh 'npx prettier --check .'
+                    sh 'npx eslint . --ext .js,.jsx'
                 }
             }
         }
 
-        stage('📦 Check backend dependencies') {
+        stage('Frontend: Test & Build') {
             steps {
-               
-                    sh './gradlew :backend:build -x test' // dependencies'
+                dir('frontend') {
+                    sh 'npm test -- --watchAll=false'
+                    sh 'npm run build'
+                }
+            }
+        }
+
+        stage('Backend: Build & Checkstyle') {
+            steps {
+                dir('backend') {
+                    sh './gradlew build checkstyleMain'
+                }
+            }
+        }
+
+        stage('Backend: Test') {
+            steps {
+                dir('backend') {
+                    sh './gradlew test'
+                }
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv("${SONARQUBE_ENV}") {
+                    dir('backend') {
+                        sh './gradlew sonarqube -Dsonar.projectKey=your-backend-key -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_AUTH_TOKEN'
+                    }
                 }
             }
         }
@@ -32,10 +66,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ Усі залежності встановлені успішно!'
+            echo '✅ Успішно перевірено frontend і backend з SonarQube'
         }
         failure {
-            echo '❌ Помилка при встановленні залежностей.'
+            echo '❌ Помилка під час перевірки чи аналізу'
         }
     }
-
+}

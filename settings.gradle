@@ -1,4 +1,4 @@
-gradle wrapper
+
 
 rootProject.name = 'class_schedule'
 
