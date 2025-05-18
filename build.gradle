@@ -16,6 +16,13 @@ plugins {
     id 'checkstyle'
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
+
+
 group 'com.softserve'
 
 repositories {

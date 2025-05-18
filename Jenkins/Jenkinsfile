@@ -1,0 +1,64 @@
+pipeline {
+    agent any
+
+    environment {
+        REQUIRED_JAVA_VERSION = '11'
+        REQUIRED_NODE_VERSION = '14.17.4'
+        REQUIRED_GRADLE_VERSION = '7.6.3'
+    }
+
+    stages {
+        stage('Check Environment') {
+            steps {
+                echo '🔍 Starting environment validation...'
+
+                sh '''
+                    echo "✅ Checking Git version"
+                    git --version || echo "❌ Git not found"
+
+                    echo "\n✅ Checking Java version"
+                    java -version 2>&1 | head -n 1 || echo "❌ Java not found"
+
+                    echo "\n✅ Checking Gradle version"
+                    gradle -v | grep Gradle || echo "❌ Gradle not found"
+
+                    echo "\n✅ Checking PostgreSQL version"
+                    psql --version || echo "❌ PostgreSQL not found"
+
+                    echo "\n✅ Checking Redis version"
+                    redis-server --version || echo "❌ Redis not found"
+
+                    echo "\n✅ Checking Node.js version"
+                    node -v || echo "❌ Node.js not found"
+
+                    echo "\n✅ Checking npm version"
+                    npm -v || echo "❌ npm not found"
+
+                    echo "\n✅ Checking Tomcat folder (optional)"
+                    [ -d "/opt/tomcat" ] && echo "✅ Tomcat folder found" || echo "❌ Tomcat folder not found"
+                '''
+
+                echo '✅ Environment validation complete.'
+            }
+        }
+
+        stage('Build Backend') {
+            steps {
+                echo '⚙️ Building backend using Gradle'
+                sh './gradlew clean build -x test'
+            }
+        }
+
+        stage('Install Frontend') {
+            steps {
+                dir('frontend') {
+                    echo '📦 Installing frontend dependencies with npm'
+                    sh 'npm install'
+
+                    echo '🚀 Building frontend'
+                    sh 'npm run build'
+                }
+            }
+        }
+    }
+} 
