@@ -3,11 +3,6 @@ pipeline {
 
     tools {
         jdk 'jdk11'
-        nodejs 'nodejs-lts'  // якщо є NodeJS плагін у Jenkins
-    }
-
-    environment {
-        GRADLE_USER_HOME = "${env.WORKSPACE}/.gradle"
     }
 
     stages {
@@ -17,45 +12,25 @@ pipeline {
             }
         }
 
-        stage('Frontend Build') {
-            dir('frontend') {
-                steps {
-                    sh 'npm ci'
-                    sh 'npm run lint' // якщо є
-                    sh 'npm test'
-                    sh 'npm run build'
-                }
+        stage('Gradle Build') {
+            steps {
+                sh './gradlew clean build '  
             }
         }
 
-        stage('Backend Check & Build') {
+        stage('Run Tests') {
             steps {
-                sh './gradlew checkstyleMain'
-                sh './gradlew test jacocoTestReport'
-                sh './gradlew build -x test'
+                sh './gradlew test'
             }
         }
 
-        stage('Liquibase Update') {
+        stage('WAR Check') {
             steps {
-                sh './gradlew update'
+                sh 'ls build/libs/*.war'
             }
         }
 
-        stage('Docker Build & Push') {
-            steps {
-                sh 'docker build -t myapp-backend:latest .'
-                dir('frontend') {
-                    sh 'docker build -t myapp-frontend:latest .'
-                }
-                withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh '''
-                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                        docker push myapp-backend:latest
-                        docker push myapp-frontend:latest
-                    '''
-                }
-            }
-        }
+        
     }
 }
+
