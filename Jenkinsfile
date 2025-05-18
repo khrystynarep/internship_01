@@ -23,7 +23,7 @@ pipeline {
 
         stage('📦 Check backend dependencies') {
             steps {
-                dir('backend') {
+               
                     sh './gradlew :backend:build -x test' // dependencies'
                 }
             }
