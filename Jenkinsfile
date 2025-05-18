@@ -24,7 +24,7 @@ pipeline {
         stage('📦 Check backend dependencies') {
             steps {
                 dir('backend') {
-                    sh './gradlew dependencies'
+                    sh './gradlew :backend:build -x test' // dependencies'
                 }
             }
         }
