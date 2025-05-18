@@ -46,9 +46,9 @@ apply from: 'liquibase.gradle'
 
 sonarqube {
     properties {
-        property "sonar.projectKey", "nromanen_Schedule"
-        property "sonar.organization", "nromanen"
-        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.projectKey", "khrystynarep_devops"
+    property "sonar.organization", "khrystynarep"
+    property "sonar.host.url", "https://sonarcloud.io""
     }
 }
 
