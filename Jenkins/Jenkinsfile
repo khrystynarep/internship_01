@@ -10,6 +10,20 @@ pipeline {
         CI = 'true'
         SONARQUBE_ENV = 'SonarQubeServer' // Назва налаштованого SonarQube серверу в Jenkins
     }
+    stage('Check gradle-wrapper.jar') {
+    steps {
+        dir('backend') {
+            script {
+                def jarExists = fileExists('gradle/wrapper/gradle-wrapper.jar')
+                if (!jarExists) {
+                    error("❌ gradle-wrapper.jar не знайдено! Без нього неможливо запустити Gradle.")
+                } else {
+                    echo '✅ gradle-wrapper.jar присутній.'
+                }
+            }
+        }
+    }
+}
 
     stages {
         stage('Checkout') {
