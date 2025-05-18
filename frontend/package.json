@@ -47,8 +47,7 @@
         "eject": "react-scripts eject",
         "predeploy": "npm run build",
         "deploy": "gh-pages -d build",
-        "lint": "eslint src/**/*.{js,jsx}",
-        "lint": "eslint 'src/**/*.{js,jsx}' --fix",
+        "lint": "eslint 'src/**/*.{js,jsx}' --max-warnings=0",
         "format": "prettier --write ."
 
 
