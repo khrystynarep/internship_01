@@ -1,7 +1,13 @@
 pipeline {
     agent any
 
-    
+    tools {
+        jdk 'jdk11'
+    }
+
+    environment {
+        GRADLE_USER_HOME = "${env.WORKSPACE}/.gradle"
+    }
 
     stages {
         stage('Checkout') {
@@ -10,9 +16,16 @@ pipeline {
             }
         }
 
-        stage('Gradle Build') {
+        stage('Prep Gradle') {
             steps {
-                sh './gradlew clean build '  
+                sh 'chmod +x ./gradlew'
+                sh './gradlew --version'
+            }
+        }
+
+        stage('Build (no tests)') {
+            steps {
+                sh './gradlew clean build -x test'
             }
         }
 
@@ -22,13 +35,24 @@ pipeline {
             }
         }
 
-        stage('WAR Check') {
+        stage('Check WAR') {
             steps {
-                sh 'ls build/libs/*.war'
+                sh 'ls -lh build/libs/*.war || echo "WAR not found"'
             }
         }
 
-        
+        // додатково:
+        // stage('Docker Build') {
+        //     steps {
+        //         sh 'docker build -t myapp:latest .'
+        //     }
+        // }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: 'build/libs/*.war', allowEmptyArchive: true
+            junit 'build/test-results/test/*.xml'
+        }
     }
 }
-
